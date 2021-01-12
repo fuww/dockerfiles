@@ -1,6 +1,6 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'eu.gcr.io/kubernetes-164514/firebase', 'firebase']
+  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase', 'firebase']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase:latest']
 - name: 'gcr.io/cloud-builders/docker'
