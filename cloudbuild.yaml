@@ -1,14 +1,13 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'eu.gcr.io/kubernetes-164514/firebase', 'firebase']
-  dir: 'firebase'
-- id: Build the container image
-  name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:latest', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:v0.74.3-extended', 'hugo/v0.74.3-extended']
-- id: Push the container image to Container Registry
-  name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:latest']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase:latest']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.74.3-extended', 'hugo/v0.74.3-extended']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest']
 
 images:
- - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:latest'
- - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:v0.74.3-extended'
+ - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest'
+ - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.74.3-extended'
