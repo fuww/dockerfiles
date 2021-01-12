@@ -2,22 +2,13 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'eu.gcr.io/kubernetes-164514/firebase', 'firebase']
   dir: 'firebase'
-images: ['eu.gcr.io/kubernetes-164514/firebase:latest']
-# - name: 'eu.gcr.io/cloud-builders/docker'
-#   args: ['build', '-t', 'eu.gcr.io/kubernetes-164514/cloudshell-elixir:latest', 'cloudshell-elixir']
-# images: 'eu.gcr.io/kubernetes-164514/cloudshell-elixir:latest'
-# - name: 'eu.gcr.io/cloud-builders/docker'
-#   args: ['build', '-t', 'eu.gcr.io/kubernetes-164514/docker-terraform:$COMMIT_SHA', 'docker-terraform']
-# images: [['eu.gcr.io/kubernetes-164514/terraform:latest'], ['eu.gcr.io/kubernetes-164514/terraform:$COMMIT_SHA'] ]
-# - name: 'eu.gcr.io/cloud-builders/docker'
-#   args: ['build', '-t', 'eu.gcr.io/kubernetes-164514/hugo:$COMMIT_SHA', 'hugo']
-#   dir: 'hugo/v0.46'
-# images: [['eu.gcr.io/kubernetes-164514/hugo:latest'], ['eu.gcr.io/kubernetes-164514/hugo:$COMMIT_SHA'], ['eu.gcr.io/kubernetes-164514/hugo:v0.46'] ]
-# - name: 'eu.gcr.io/cloud-builders/docker'
-#   args: ['build', '-t', 'eu.gcr.io/kubernetes-164514/hugo:$COMMIT_SHA', 'hugo']
-#   dir: 'hugo/v0.39'
-# images: ['eu.gcr.io/kubernetes-164514/hugo:v0.39']
-# - name: 'eu.gcr.io/cloud-builders/docker'
-#   args: ['build', '-t', 'eu.gcr.io/kubernetes-164514/firebase:$COMMIT_SHA', 'firebase']
-#   dir: 'firebase'
-# images: [['eu.gcr.io/kubernetes-164514/firebase:latest'], ['eu.gcr.io/kubernetes-164514/firebase:$COMMIT_SHA'] ]
+- id: Build the container image
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:latest', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:v0.74.3-extended', 'hugo/v0.74.3-extended']
+- id: Push the container image to Container Registry
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:latest']
+
+images:
+ - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:latest'
+ - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fuww/hugo:v0.74.3-extended'
