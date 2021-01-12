@@ -6,7 +6,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.74.3-extended', 'hugo/v0.74.3-extended']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest']
+  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.74.3-extended']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.80.0-extended', 'hugo/v0.80.0-extended']
 - name: 'gcr.io/cloud-builders/docker'
