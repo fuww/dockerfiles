@@ -1,22 +1,27 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase', 'firebase']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase:latest']
+- name: 'gcr.io/kaniko-project/executor:latest'
+  args:
+  - --dockerfile=firebase/Dockerfile
+  - --destination=europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase
+  - --cache=true
+  - --cache-ttl=24h
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.74.3-extended', 'hugo/v0.74.3-extended']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.74.3-extended']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.80.0-extended', 'hugo/v0.80.0-extended']
+  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.80.0-extended', 'hugo/v0.80.0-extended']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.82.1-extended', 'hugo/v0.82.1-extended']
+  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.80.0-extended']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.82.1-ext', 'hugo/v0.82.1-ext']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.82.1-ext']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest']
 
 images:
- - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase:latest'
  - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest'
  - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.74.3-extended'
  - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.80.0-extended'
- - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.82.1-extended'
+ - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.82.1-ext'
