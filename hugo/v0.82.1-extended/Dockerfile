@@ -1,7 +1,7 @@
 
 FROM google/cloud-sdk:latest
 
-ENV HUGO_VERSION 0.80.0
+ENV HUGO_VERSION 0.82.1
 ENV NODE_VERSION 14.15.4
 
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
