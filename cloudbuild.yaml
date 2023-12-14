@@ -6,10 +6,6 @@ steps:
   - --cache=true
   - --cache-ttl=24h
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.82.1-extended', 'hugo/v0.82.1-extended']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.82.1-extended']
-- name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.121.0-extended', 'hugo/v0.121.0-extended']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.121.0-extended']
@@ -18,5 +14,4 @@ steps:
 
 images:
  - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest'
- - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.82.1-extended'
  - 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.121.0-extended'
