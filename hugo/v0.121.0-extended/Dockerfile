@@ -45,6 +45,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && npm --version
 
 # add go
+# install cgo-related dependencies
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -53,48 +54,51 @@ RUN set -eux; \
 		libc6-dev \
 		make \
 		pkg-config \
-        wget \
-		git-lfs \
 	; \
 	rm -rf /var/lib/apt/lists/*
 
 ENV PATH /usr/local/go/bin:$PATH
 
-ENV GOLANG_VERSION 1.21
+ENV GOLANG_VERSION 1.21.5
 
 RUN set -eux; \
 	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
 	url=; \
 	case "$arch" in \
 		'amd64') \
-			url='https://dl.google.com/go/go1.19.linux-amd64.tar.gz'; \
-			sha256='464b6b66591f6cf055bc5df90a9750bf5fbc9d038722bb84a9d56a2bea974be6'; \
+			url='https://dl.google.com/go/go1.21.5.linux-amd64.tar.gz'; \
+			sha256='e2bc0b3e4b64111ec117295c088bde5f00eeed1567999ff77bc859d7df70078e'; \
 			;; \
 		'armel') \
 			export GOARCH='arm' GOARM='5' GOOS='linux'; \
 			;; \
 		'armhf') \
-			url='https://dl.google.com/go/go1.19.linux-armv6l.tar.gz'; \
-			sha256='25197c7d70c6bf2b34d7d7c29a2ff92ba1c393f0fb395218f1147aac2948fb93'; \
+			url='https://dl.google.com/go/go1.21.5.linux-armv6l.tar.gz'; \
+			sha256='837f4bf4e22fcdf920ffeaa4abf3d02d1314e03725431065f4d44c46a01b42fe'; \
 			;; \
 		'arm64') \
-			url='https://dl.google.com/go/go1.19.linux-arm64.tar.gz'; \
-			sha256='efa97fac9574fc6ef6c9ff3e3758fb85f1439b046573bf434cccb5e012bd00c8'; \
+			url='https://dl.google.com/go/go1.21.5.linux-arm64.tar.gz'; \
+			sha256='841cced7ecda9b2014f139f5bab5ae31785f35399f236b8b3e75dff2a2978d96'; \
 			;; \
 		'i386') \
-			url='https://dl.google.com/go/go1.19.linux-386.tar.gz'; \
-			sha256='6f721fa3e8f823827b875b73579d8ceadd9053ad1db8eaa2393c084865fb4873'; \
+			url='https://dl.google.com/go/go1.21.5.linux-386.tar.gz'; \
+			sha256='8f4dba9cf5c61757bbd7e9ebdb93b6a30a1b03f4a636a1ba0cc2f27b907ab8e1'; \
 			;; \
 		'mips64el') \
-			export GOARCH='mips64le' GOOS='linux'; \
+			url='https://dl.google.com/go/go1.21.5.linux-mips64le.tar.gz'; \
+			sha256='0799ce6a33181d09d623551e108b8d48359ace39eef9dc935f3140618f844f12'; \
 			;; \
 		'ppc64el') \
-			url='https://dl.google.com/go/go1.19.linux-ppc64le.tar.gz'; \
-			sha256='92bf5aa598a01b279d03847c32788a3a7e0a247a029dedb7c759811c2a4241fc'; \
+			url='https://dl.google.com/go/go1.21.5.linux-ppc64le.tar.gz'; \
+			sha256='907b8c6ec4be9b184952e5d3493be66b1746442394a8bc78556c56834cd7c38b'; \
+			;; \
+		'riscv64') \
+			url='https://dl.google.com/go/go1.21.5.linux-riscv64.tar.gz'; \
+			sha256='984d8f999f5019d15527a1a0e6b0c3ef879833e26dcd422ab0ef4d81ac486b96'; \
 			;; \
 		's390x') \
-			url='https://dl.google.com/go/go1.19.linux-s390x.tar.gz'; \
-			sha256='58723eb8e3c7b9e8f5e97b2d38ace8fd62d9e5423eaa6cdb7ffe5f881cb11875'; \
+			url='https://dl.google.com/go/go1.21.5.linux-s390x.tar.gz'; \
+			sha256='9c4a81b72ebe44368813cd03684e1080a818bf915d84163abae2ed325a1b2dc0'; \
 			;; \
 		*) echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
 	esac; \
@@ -102,8 +106,8 @@ RUN set -eux; \
 	if [ -z "$url" ]; then \
 # https://github.com/golang/go/issues/38536#issuecomment-616897960
 		build=1; \
-		url='https://dl.google.com/go/go1.19.src.tar.gz'; \
-		sha256='9419cc70dc5a2523f29a77053cafff658ed21ef3561d9b6b020280ebceab28b9'; \
+		url='https://dl.google.com/go/go1.21.5.src.tar.gz'; \
+		sha256='285cbbdf4b6e6e62ed58f370f3f6d8c30825d6e56c5853c66d3c23bcdb09db19'; \
 		echo >&2; \
 		echo >&2 "warning: current architecture ($arch) does not have a compatible Go binary release; will be building from source"; \
 		echo >&2; \
@@ -155,18 +159,32 @@ RUN set -eux; \
 			/usr/local/go/src/cmd/dist/dist \
 			"$GOCACHE" \
 		; \
+	elif [ "$arch" = 'armhf' ]; then \
+		[ -s /usr/local/go/go.env ]; \
+		before="$(go env GOARM)"; [ "$before" != '7' ]; \
+		{ \
+			echo; \
+			echo '# https://github.com/docker-library/golang/issues/494'; \
+			echo 'GOARM=7'; \
+		} >> /usr/local/go/go.env; \
+		after="$(go env GOARM)"; [ "$after" = '7' ]; \
 	fi; \
 	\
 	go version
 
+# don't auto-upgrade the gotoolchain
+# https://github.com/docker-library/golang/issues/472
+ENV GOTOOLCHAIN=local
+
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
 WORKDIR $GOPATH
 
-RUN npm i lerna -g --loglevel notice
-RUN npm i firebase-tools postcss-cli autoprefixer tailwindcss -g
-
+RUN npm install -g lerna \
+firebase-tools postcss-cli autoprefixer tailwindcss \
+--loglevel notice && \
+npm cache clean --force
 RUN (cd /usr/local/bin; curl -qL https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz | tar xz hugo)
 
 ENV LANG=en_US.UTF-8
