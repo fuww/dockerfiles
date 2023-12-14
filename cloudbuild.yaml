@@ -1,12 +1,8 @@
 steps:
 - name: 'gcr.io/kaniko-project/executor:latest'
-  args:
-  - --dockerfile=firebase/Dockerfile
-  - --destination=europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase
-  - --cache=true
-  - --cache-ttl=24h
+  args: ['--dockerfile=firebase/Dockerfile', '--destination=europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/firebase', '--cache=true', '--cache-ttl=24h']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.121.0-extended', 'hugo/v0.121.0-extended']
+  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.121.0-extended', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:latest', 'hugo/v0.121.0-extended']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/fu/hugo:v0.121.0-extended']
 - name: 'gcr.io/cloud-builders/docker'
