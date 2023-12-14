@@ -27,7 +27,9 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 	108F52B48DB57BB0CC439B2997B01419BD92F80A \
     A363A499291CBBC940DD62E41F10027AF002F8B0 \
     ; do \
-    gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" ; \
+    gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+    gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+    gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
     done \
     && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
     && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
